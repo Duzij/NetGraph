@@ -46,11 +46,5 @@ namespace NetGraph
             Controls.Add(viewer);
             ResumeLayout();
         }
-
-        private MouseEventHandler ShowDetail()
-        {
-           
-            return 
-        }
     }
 }
