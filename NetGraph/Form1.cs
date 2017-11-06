@@ -48,7 +48,7 @@ namespace NetGraph
             linkParser = new LinkParser(this);
             await linkParser.Analyze(0);
             var generator = new GraphGenerator(linkParser.URLs);
-            var diagram = new Graph_diagram(generator.GenerateGraph());
+            var diagram = new Graph_diagram(generator.GenerateGraph(), linkParser.URLs);
             diagram.ShowDialog();
         }
     }

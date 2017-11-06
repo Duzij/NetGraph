@@ -20,13 +20,15 @@ namespace NetGraph
         public LinkParser(Form1 form)
         {
             URLs = new List<FlagedLink>();
-            URLs.Add(new FlagedLink { URL = form.StartURL });
+            URLs.Add(new FlagedLink { URL = form.StartURL, ParentURL = "" });
             Form = form;
         }
 
         public async Task Analyze(int startURLIndex)
         {
             var StartURL = URLs[startURLIndex].URL;
+            var parentLink = URLs[startURLIndex];
+            //avoiding recursive links
             if (URLs.Where(a => a.URL == StartURL).Count() > 0)
             {
                 using (WebClient client = new WebClient())
@@ -43,14 +45,14 @@ namespace NetGraph
                             {
                                 if (URLs.Count < Form.MaxNumPages && DomainsList.Count < Form.MaxNumDomain)
                                 {
-                                    AddLink(StartURL, link);
+                                    AddLink(parentLink, link);
                                 }
                             }
                             else if (Form.MaxNumPages != 0)
                             {
                                 if (URLs.Count < Form.MaxNumPages)
                                 {
-                                    AddLink(StartURL, link);
+                                    AddLink(parentLink, link);
                                 }
                                 else
                                     return;
@@ -59,23 +61,26 @@ namespace NetGraph
                             {
                                 if (DomainsList.Count < Form.MaxNumDomain)
                                 {
-                                    AddLink(StartURL, link);
+                                    AddLink(parentLink, link);
                                 }
                                 else
                                     return;
                             }
                         }
-                        else {
-                            return;
-                        }
                     }
                 }
             }
+            else
+            {
+                return;
+            }
         }
 
-        private void AddLink(string StartURL, HtmlNode link)
+        private void AddLink(FlagedLink parent, HtmlNode link)
         {
-            URLs.Add(new FlagedLink { URL = link.GetAttributeValue("href", string.Empty), ParentURL = StartURL });
+            var child = new FlagedLink { URL = link.GetAttributeValue("href", string.Empty), ParentURL = parent.URL };
+            parent.ChildLinks.Add(child);
+            URLs.Add(child);
             Form.setPagesText(URLs.Count.ToString());
             Form.setDomainsText(DomainsList.Count.ToString());
         }

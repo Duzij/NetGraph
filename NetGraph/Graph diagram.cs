@@ -14,23 +14,22 @@ namespace NetGraph
 {
     public partial class Graph_diagram : Form
     {
-        public Graph graph;
-        public GViewer viewer = new GViewer();
-        public Graph_diagram(Graph graph)
+        public GViewer viewer { get; set; }
+        public GraphGenerator graphGenerator { get; set; }
+
+        public Graph_diagram(Graph graph, List<FlagedLink> links)
         {
             InitializeComponent();
 
-            this.graph = graph;
-            InitializeComponent();
+            viewer = new GViewer();
             viewer.EdgeInsertButtonVisible = false;
-            viewer.MouseDoubleClick += new MouseEventHandler((sender, evt) => {
+            viewer.MouseDoubleClick += new MouseEventHandler((sender, evt) =>
+            {
                 if (viewer.SelectedObject != null)
                 {
-                    var deatiledGraph = new Graph(viewer.SelectedObject.ToString());
-                    Node node = (Node)viewer.SelectedObject;
-                    Node a = new Node("a") { LabelText = node.LabelText };
-                    graph.AddNode(a);
-                    Graph_diagram f = new Graph_diagram(deatiledGraph);
+                    graphGenerator = new GraphGenerator(links);
+                    var childGraph = graphGenerator.GenerateChildGraph((Node)viewer.SelectedObject);
+                    Graph_diagram f = new Graph_diagram(childGraph, links);
                     f.ShowDialog();
                 }
             });
@@ -40,9 +39,10 @@ namespace NetGraph
                 item.Attr.LabelMargin = 5;
             }
 
+            viewer.Graph = null;
             viewer.Graph = graph;
             SuspendLayout();
-            viewer.Dock = DockStyle.Bottom;
+            viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
             ResumeLayout();
         }
