@@ -70,6 +70,7 @@
     <Compile Include="Graph diagram.Designer.cs">
       <DependentUpon>Graph diagram.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphFactory.cs" />
     <Compile Include="GraphGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

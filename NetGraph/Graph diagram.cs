@@ -39,9 +39,7 @@ namespace NetGraph
             {
                 item.Attr.LabelMargin = 5;
             }
-
             
-            viewer.Graph = null;
             viewer.Graph = graph;
             SuspendLayout();
             viewer.Dock = DockStyle.Fill;

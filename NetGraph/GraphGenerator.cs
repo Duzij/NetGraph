@@ -17,11 +17,9 @@ namespace NetGraph
 
         public Graph graph { get; set; }
 
-        public async Task<Graph> GenerateGraph()
+        public Graph GenerateGraph()
         {
-            graph = new Graph();
-            var sugiyamaSettings = (SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
-            sugiyamaSettings.NodeSeparation *= 2;
+            graph = GraphFactory.GetGraph();
 
             foreach (var link in URLs)
             {
@@ -35,19 +33,34 @@ namespace NetGraph
                     if (!child.IsInParentDomain)
                         graph.AddEdge(link.URL, child.URL);
                 }
+
             }
+            SetMaxItemsOnLayer(4);
 
             return graph;
         }
 
+        public void SetMaxItemsOnLayer(int items)
+        {
+            var list = new List<Node>(graph.Nodes);
+            //we dont want to set parent to same level as children
+            list.RemoveAt(0);
+
+            for (int i = 0; i < list.Count; i = i + items)
+            {
+                Node[] array = new Node[items];
+                for (int a = 0; a < array.Length; a++)
+                {
+                    if ((i + a) < list.Count)
+                        array[a] = graph.FindNode(list[i + a].LabelText);
+                }
+                graph.LayerConstraints.AddSameLayerNeighbors(array);
+            }
+        }
+
         public Graph GenerateChildGraph(Node parent)
         {
-            graph = new Graph(parent.LabelText, parent.LabelText);
-
-            var sugiyamaSettings = (SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
-            sugiyamaSettings.NodeSeparation *= 2;
-
-            graph.LayoutAlgorithmSettings = sugiyamaSettings;
+            graph = GraphFactory.GetGraph();
 
             var parentNode = new Node(parent.LabelText) { LabelText = parent.LabelText };
             graph.AddNode(parentNode);
