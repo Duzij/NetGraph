@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.Layout.Layered;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NetGraph
 {
@@ -25,7 +26,7 @@ namespace NetGraph
             {
                 Node a = new Node(link.URL) { LabelText = link.URL };
                 //we dont want to show child pages on main graph, but we show them only if they don't direct somewhere else
-                if (!link.IsInParentDomain || link.ChildLinks.Count > 0)
+                if (!link.IsInParentDomain)
                     graph.AddNode(a);
 
                 foreach (var child in link.ChildLinks)
@@ -54,7 +55,7 @@ namespace NetGraph
                     if ((i + a) < list.Count)
                         array[a] = graph.FindNode(list[i + a].LabelText);
                 }
-                graph.LayerConstraints.AddSameLayerNeighbors(array);
+                graph.LayerConstraints.AddSameLayerNeighbors(array.Where(c => c != null).ToArray());
             }
         }
 
