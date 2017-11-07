@@ -36,27 +36,8 @@ namespace NetGraph
                 }
 
             }
-            SetMaxItemsOnLayer(4);
 
             return graph;
-        }
-
-        public void SetMaxItemsOnLayer(int items)
-        {
-            var list = new List<Node>(graph.Nodes);
-            //we dont want to set parent to same level as children
-            list.RemoveAt(0);
-
-            for (int i = 0; i < list.Count; i = i + items)
-            {
-                Node[] array = new Node[items];
-                for (int a = 0; a < array.Length; a++)
-                {
-                    if ((i + a) < list.Count)
-                        array[a] = graph.FindNode(list[i + a].LabelText);
-                }
-                graph.LayerConstraints.AddSameLayerNeighbors(array.Where(c => c != null).ToArray());
-            }
         }
 
         public Graph GenerateChildGraph(Node parent)

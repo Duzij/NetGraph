@@ -1,6 +1,7 @@
 ﻿using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.GraphViewerGdi;
 using Microsoft.Msagl.Layout.Layered;
+using Microsoft.Msagl.Miscellaneous;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,7 +42,10 @@ namespace NetGraph
             }
             
             viewer.Graph = graph;
-            SuspendLayout();
+
+            var settings = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings();
+
+            LayoutHelpers.CalculateLayout(graph.GeometryGraph, settings, null);
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
             ResumeLayout();
