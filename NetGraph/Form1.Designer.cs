@@ -107,6 +107,11 @@
             // max_num_domains
             // 
             this.max_num_domains.Location = new System.Drawing.Point(147, 83);
+            this.max_num_domains.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.max_num_domains.Name = "max_num_domains";
             this.max_num_domains.Size = new System.Drawing.Size(124, 20);
             this.max_num_domains.TabIndex = 17;
@@ -123,6 +128,11 @@
             // max_num_connections
             // 
             this.max_num_connections.Location = new System.Drawing.Point(147, 57);
+            this.max_num_connections.Maximum = new decimal(new int[] {
+            10000000,
+            0,
+            0,
+            0});
             this.max_num_connections.Name = "max_num_connections";
             this.max_num_connections.Size = new System.Drawing.Size(124, 20);
             this.max_num_connections.TabIndex = 15;

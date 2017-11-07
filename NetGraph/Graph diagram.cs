@@ -46,6 +46,7 @@ namespace NetGraph
             var settings = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings();
 
             LayoutHelpers.CalculateLayout(graph.GeometryGraph, settings, null);
+            SuspendLayout();
             viewer.Dock = DockStyle.Fill;
             Controls.Add(viewer);
             ResumeLayout();

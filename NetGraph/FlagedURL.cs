@@ -8,18 +8,16 @@ namespace NetGraph
     {
         public string URL { get; set; }
         public string Domain => TextUtils.GetDomain(URL);
-        public bool IsInParentDomain => URL[0] == '#' || URL[0] == '/' ? true : CheckForChildWithSSL();
+        public bool SameAsParentDomain => ChildDetection();
 
-        private bool CheckForChildWithSSL()
+        private bool ChildDetection()
         {
-            Regex r = new Regex("^https?://");
-            if (URL.Contains(ParentURL))
-                { return true; }
-            else if (r.IsMatch(URL))
-            {
-                return URL.Replace("http", "https").Contains(ParentURL);
-            }
-            return false;
+            if (URL[0] == '/' || URL[0] == '.' || (URL.StartsWith("..")))
+                return true;
+            else if (URL.Contains(TextUtils.GetDomain(ParentURL)))
+                return true;
+            else
+                return false;
         }
 
         public string ParentURL { get; set; }

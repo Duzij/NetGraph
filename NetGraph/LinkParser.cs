@@ -37,53 +37,61 @@ namespace NetGraph
                     HtmlDocument doc = new HtmlDocument();
                     doc.LoadHtml(html);
                     var links = doc.DocumentNode.SelectNodes("//a[@href]");
-                    foreach (HtmlNode link in links)
+                    if (links.Count > 0)
                     {
-                        if (!ProcessPaused)
+                        foreach (HtmlNode link in links)
                         {
-                            if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
+                            if (!ProcessPaused)
                             {
-                                if (URLs.Count < Form.MaxNumPages && DomainsList.Count < Form.MaxNumDomain)
+                                if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
                                 {
-                                    AddLink(parentLink, link);
+                                    if (URLs.Count < Form.MaxNumPages && DomainsList.Count < Form.MaxNumDomain)
+                                    {
+                                        AddLink(parentLink, link);
+                                    }
                                 }
-                            }
-                            else if (Form.MaxNumPages != 0)
-                            {
-                                if (URLs.Count < Form.MaxNumPages)
+                                else if (Form.MaxNumPages != 0)
                                 {
-                                    AddLink(parentLink, link);
+                                    if (URLs.Count < Form.MaxNumPages)
+                                    {
+                                        AddLink(parentLink, link);
+                                    }
+                                    else
+                                        return URLs;
                                 }
-                                else
-                                    return URLs;
-                            }
-                            else if (Form.MaxNumDomain != 0)
-                            {
-                                if (DomainsList.Count < Form.MaxNumDomain)
+                                else if (Form.MaxNumDomain != 0)
                                 {
-                                    AddLink(parentLink, link);
+                                    if (DomainsList.Count < Form.MaxNumDomain)
+                                    {
+                                        AddLink(parentLink, link);
+                                    }
+                                    else
+                                        return URLs;
                                 }
-                                else
-                                    return URLs;
                             }
                         }
                     }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error");
+                    }
                 }
             }
-            else
-            {
-                return URLs;
-            }
+            await Analyze(startURLIndex + 1);
             return URLs;
         }
 
         private void AddLink(FlagedLink parent, HtmlNode link)
         {
             var URL = link.GetAttributeValue("href", string.Empty);
-            if (URL == "#" || URL == "" || URLs.Where(a => a.URL == URL).Count() > 0)
+            if (URL.StartsWith("#") || URL == "#" || URL == "" || URL == "/" || URLs.Where(a => a.URL == URL || a.URL.Replace("https","http") == URL).Count() > 0)
+            {
                 return;
+            }
             else
             {
+                if (URL.StartsWith("/"))
+                    URL = parent.Domain + URL;
                 var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
                 parent.ChildLinks.Add(child);
                 URLs.Add(child);

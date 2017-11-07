@@ -26,12 +26,12 @@ namespace NetGraph
             {
                 Node a = new Node(link.URL) { LabelText = link.URL };
                 //we dont want to show child pages on main graph, but we show them only if they don't direct somewhere else
-                if (!link.IsInParentDomain)
+                if (!link.SameAsParentDomain)
                     graph.AddNode(a);
 
                 foreach (var child in link.ChildLinks)
                 {
-                    if (!child.IsInParentDomain)
+                    if (!child.SameAsParentDomain)
                         graph.AddEdge(link.URL, child.URL);
                 }
 
@@ -51,7 +51,7 @@ namespace NetGraph
 
             foreach (var child in parentLink.ChildLinks)
             {
-                if (child.IsInParentDomain)
+                if (child.SameAsParentDomain)
                 {
                     graph.AddNode(new Node(child.URL) { LabelText = child.URL });
                     graph.AddEdge(parentLink.URL, "", child.URL);
