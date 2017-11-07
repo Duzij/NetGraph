@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace NetGraph
 {
@@ -6,14 +7,25 @@ namespace NetGraph
     {
         public static string GetDomain(string URL)
         {
-            try
+            Regex r = new Regex(@".(:\/\/).");
+            if (r.IsMatch(URL))
             {
                 int index = URL.IndexOf("://") + 3;
                 string a = URL.Substring(index, URL.Length - index);
-                int index2 = a.IndexOf("/");
-                return a.Substring(0, index2);
+
+                Regex r2 = new Regex(@"./.");
+                if (r2.IsMatch(a))
+                {
+                    int index2 = a.IndexOf("/");
+                    return a.Substring(0, index2);
+                }
+                else
+                {
+                    return a;
+                }
+               
             }
-            catch (Exception ex)
+            else
             {
                 return "-not-avalible-";
             }

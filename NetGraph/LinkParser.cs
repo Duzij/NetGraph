@@ -24,7 +24,7 @@ namespace NetGraph
             Form = form;
         }
 
-        public async Task Analyze(int startURLIndex)
+        public async Task<List<FlagedLink>> Analyze(int startURLIndex)
         {
             var StartURL = URLs[startURLIndex].URL;
             var parentLink = URLs[startURLIndex];
@@ -55,7 +55,7 @@ namespace NetGraph
                                     AddLink(parentLink, link);
                                 }
                                 else
-                                    return;
+                                    return URLs;
                             }
                             else if (Form.MaxNumDomain != 0)
                             {
@@ -64,7 +64,7 @@ namespace NetGraph
                                     AddLink(parentLink, link);
                                 }
                                 else
-                                    return;
+                                    return URLs;
                             }
                         }
                     }
@@ -72,17 +72,24 @@ namespace NetGraph
             }
             else
             {
-                return;
+                return URLs;
             }
+            return URLs;
         }
 
         private void AddLink(FlagedLink parent, HtmlNode link)
         {
-            var child = new FlagedLink { URL = link.GetAttributeValue("href", string.Empty), ParentURL = parent.URL };
-            parent.ChildLinks.Add(child);
-            URLs.Add(child);
-            Form.setPagesText(URLs.Count.ToString());
-            Form.setDomainsText(DomainsList.Count.ToString());
+            var URL = link.GetAttributeValue("href", string.Empty);
+            if (URL == "#" || URL == "" || URLs.Where(a => a.URL == URL).Count() > 0)
+                return;
+            else
+            {
+                var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
+                parent.ChildLinks.Add(child);
+                URLs.Add(child);
+                Form.setPagesText(URLs.Count.ToString());
+                Form.setDomainsText(DomainsList.Count.ToString());
+            }
         }
     }
 }

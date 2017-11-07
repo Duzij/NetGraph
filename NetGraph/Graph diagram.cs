@@ -1,5 +1,6 @@
 ﻿using Microsoft.Msagl.Drawing;
 using Microsoft.Msagl.GraphViewerGdi;
+using Microsoft.Msagl.Layout.Layered;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,6 +40,7 @@ namespace NetGraph
                 item.Attr.LabelMargin = 5;
             }
 
+            
             viewer.Graph = null;
             viewer.Graph = graph;
             SuspendLayout();

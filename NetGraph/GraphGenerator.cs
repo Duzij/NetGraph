@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Msagl.Drawing;
+using Microsoft.Msagl.Layout.Layered;
+using System.Threading.Tasks;
 
 namespace NetGraph
 {
@@ -15,15 +17,17 @@ namespace NetGraph
 
         public Graph graph { get; set; }
 
-        public Graph GenerateGraph()
+        public async Task<Graph> GenerateGraph()
         {
             graph = new Graph();
+            var sugiyamaSettings = (SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
+            sugiyamaSettings.NodeSeparation *= 2;
 
             foreach (var link in URLs)
             {
                 Node a = new Node(link.URL) { LabelText = link.URL };
                 //we dont want to show child pages on main graph, but we show them only if they don't direct somewhere else
-                if (!link.IsInParentDomain || link.ChildLinks.Exists(child => child.ChildLinks.Count > 0))
+                if (!link.IsInParentDomain || link.ChildLinks.Count > 0)
                     graph.AddNode(a);
 
                 foreach (var child in link.ChildLinks)
@@ -39,14 +43,24 @@ namespace NetGraph
         public Graph GenerateChildGraph(Node parent)
         {
             graph = new Graph(parent.LabelText, parent.LabelText);
-            graph.AddNode(parent);
+
+            var sugiyamaSettings = (SugiyamaLayoutSettings)graph.LayoutAlgorithmSettings;
+            sugiyamaSettings.NodeSeparation *= 2;
+
+            graph.LayoutAlgorithmSettings = sugiyamaSettings;
+
+            var parentNode = new Node(parent.LabelText) { LabelText = parent.LabelText };
+            graph.AddNode(parentNode);
 
             var parentLink = URLs.Find(a => a.URL == parent.LabelText);
 
             foreach (var child in parentLink.ChildLinks)
             {
                 if (child.IsInParentDomain)
-                    graph.AddEdge(parentLink.URL, child.URL);
+                {
+                    graph.AddNode(new Node(child.URL) { LabelText = child.URL });
+                    graph.AddEdge(parentLink.URL, "", child.URL);
+                }
             }
             return graph;
         }

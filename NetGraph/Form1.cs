@@ -45,11 +45,17 @@ namespace NetGraph
 
         private async void browse_btn_Click(object sender, EventArgs e)
         {
+            browse_btn.Enabled = false;
+            stop_btn.Enabled = true;
             linkParser = new LinkParser(this);
-            await linkParser.Analyze(0);
-            var generator = new GraphGenerator(linkParser.URLs);
-            var diagram = new Graph_diagram(generator.GenerateGraph(), linkParser.URLs);
+            var urls = await linkParser.Analyze(0);
+            var generator = new GraphGenerator(urls);
+            var graph = await generator.GenerateGraph();
+            var diagram = new Graph_diagram(graph, linkParser.URLs);
             diagram.ShowDialog();
+
+            browse_btn.Enabled = true;
+            stop_btn.Enabled = false;
         }
     }
 }
