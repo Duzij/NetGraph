@@ -27,12 +27,16 @@ namespace NetGraph
             viewer.EdgeInsertButtonVisible = false;
             viewer.MouseDoubleClick += new MouseEventHandler((sender, evt) =>
             {
-                if (viewer.SelectedObject != null)
+                var viewerNode = (Node)viewer.SelectedObject;
+                if (viewerNode != null)
                 {
-                    graphGenerator = new GraphGenerator(links);
-                    var childGraph = graphGenerator.GenerateChildGraph((Node)viewer.SelectedObject);
-                    Graph_diagram f = new Graph_diagram(childGraph, links);
-                    f.ShowDialog();
+                    if (viewerNode.Edges.Count() > 0)
+                        OpenChildGraphDiagram(links);
+                    else
+                    {
+                        var detailedForm = new DetailedNodeInfo(viewerNode);
+                        detailedForm.Show();
+                    }
                 }
             });
 
@@ -40,16 +44,23 @@ namespace NetGraph
             {
                 item.Attr.LabelMargin = 5;
             }
-            
+
             viewer.Graph = graph;
-
-            var settings = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings();
-
-            LayoutHelpers.CalculateLayout(graph.GeometryGraph, settings, null);
-            SuspendLayout();
             viewer.Dock = DockStyle.Fill;
+            var settings = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings() { AdjustScale = true };
+            LayoutHelpers.CalculateLayout(graph.GeometryGraph, settings, null);
+
             Controls.Add(viewer);
+
             ResumeLayout();
+        }
+
+        private void OpenChildGraphDiagram(List<FlagedLink> links)
+        {
+            graphGenerator = new GraphGenerator(links);
+            var childGraph = graphGenerator.GenerateChildGraph((Node)viewer.SelectedObject);
+            Graph_diagram f = new Graph_diagram(childGraph, links);
+            f.ShowDialog();
         }
     }
 }

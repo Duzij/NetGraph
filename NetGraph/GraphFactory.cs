@@ -16,7 +16,6 @@ namespace NetGraph
             var graph = new Graph();
 
             SugiyamaLayoutSettings ss = graph.LayoutAlgorithmSettings as SugiyamaLayoutSettings;
-            ss.MaxAspectRatioEccentricity = 100;
             ss.FallbackLayoutSettings = new MdsLayoutSettings {  };
 
             return graph;

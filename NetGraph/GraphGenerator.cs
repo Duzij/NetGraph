@@ -40,6 +40,20 @@ namespace NetGraph
             return graph;
         }
 
+        public List<Edge> GenerateEdges(string parentURL)
+        {
+            var listEdges = new List<Edge>();
+
+            foreach (var child in parentLink.ChildLinks)
+            {
+                if (child.SameAsParentDomain)
+                {
+                    graph.AddNode(new Node(child.URL) { LabelText = child.URL });
+                    graph.AddEdge(parentLink.URL, "", child.URL);
+                }
+            }
+        }
+
         public Graph GenerateChildGraph(Node parent)
         {
             graph = GraphFactory.GetGraph();

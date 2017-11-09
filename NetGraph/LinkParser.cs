@@ -77,7 +77,7 @@ namespace NetGraph
                     }
                 }
             }
-            await Analyze(startURLIndex + 1);
+            //await Analyze(startURLIndex + 1);
             return URLs;
         }
 
