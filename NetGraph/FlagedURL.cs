@@ -8,6 +8,7 @@ namespace NetGraph
     {
         public string URL { get; set; }
         public string Domain => TextUtils.GetDomain(URL);
+
         public bool SameAsParentDomain => ChildDetection();
 
         private bool ChildDetection()
@@ -32,6 +33,6 @@ namespace NetGraph
         }
 
         public string ParentURL { get; set; }
-        public List<FlagedLink> ChildLinks { get; set; } = new List<FlagedLink>();
+        public List<string> ChildLinks { get; set; } = new List<string>();
     }
 }

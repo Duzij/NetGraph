@@ -9,12 +9,12 @@ namespace NetGraph
 {
     public class GraphGenerator
     {
-        public GraphGenerator(List<FlagedLink> uRLs)
+        public GraphGenerator()
         {
-            URLs = uRLs;
         }
 
-        public List<FlagedLink> URLs { get; }
+        public List<Edge> Edges { get; set; } = new List<Edge>();
+        public LinkRepository linkRepository { get; set; } = new LinkRepository();
 
         public Graph graph { get; set; }
 
@@ -22,7 +22,7 @@ namespace NetGraph
         {
             graph = GraphFactory.GetGraph();
 
-            foreach (var link in URLs)
+            foreach (var link in GlobalLinkCatalog.Links)
             {
                 Node a = new Node(link.URL) { LabelText = link.URL };
                 //we dont want to show child pages on main graph, but we show them only if they don't direct somewhere else
@@ -31,8 +31,8 @@ namespace NetGraph
 
                 foreach (var child in link.ChildLinks)
                 {
-                    if (!child.SameAsParentDomain)
-                        graph.AddEdge(link.URL, child.URL);
+                    if (!linkRepository.GetLink(child).SameAsParentDomain)
+                        graph.AddEdge(link.URL, child);
                 }
 
             }
@@ -40,16 +40,15 @@ namespace NetGraph
             return graph;
         }
 
-        public List<Edge> GenerateEdges(string parentURL)
+        internal void GenerateEdges(string parentURL)
         {
-            var listEdges = new List<Edge>();
+            var parent = linkRepository.GetLink(parentURL);
 
-            foreach (var child in parentLink.ChildLinks)
+            foreach (var child in parent.ChildLinks)
             {
-                if (child.SameAsParentDomain)
+                if (linkRepository.GetLink(child).SameAsParentDomain)
                 {
-                    graph.AddNode(new Node(child.URL) { LabelText = child.URL });
-                    graph.AddEdge(parentLink.URL, "", child.URL);
+                    Edges.Add(new Edge(parentURL, "", child));
                 }
             }
         }
@@ -61,14 +60,14 @@ namespace NetGraph
             var parentNode = new Node(parent.LabelText) { LabelText = parent.LabelText };
             graph.AddNode(parentNode);
 
-            var parentLink = URLs.Find(a => a.URL == parent.LabelText);
+            var parentLink = linkRepository.GetLink(parentNode.LabelText);
 
             foreach (var child in parentLink.ChildLinks)
             {
-                if (child.SameAsParentDomain)
+                if (linkRepository.GetLink(child).SameAsParentDomain)
                 {
-                    graph.AddNode(new Node(child.URL) { LabelText = child.URL });
-                    graph.AddEdge(parentLink.URL, "", child.URL);
+                    graph.AddNode(new Node(child) { LabelText = child });
+                    graph.AddEdge(parentLink.URL, "", child);
                 }
             }
             return graph;

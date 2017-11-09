@@ -50,10 +50,10 @@ namespace NetGraph
             browse_btn.Enabled = false;
             stop_btn.Enabled = true;
             linkParser = new LinkParser(this);
-            var urls = await linkParser.Analyze(0);
-            var generator = new GraphGenerator(urls);
+            await linkParser.Analyze();
+            var generator = new GraphGenerator();
             var graph = generator.GenerateGraph();
-            var diagram = new Graph_diagram(graph, linkRepository.GetAllLinks());
+            var diagram = new Graph_diagram(graph);
             diagram.ShowDialog();
 
             browse_btn.Enabled = true;

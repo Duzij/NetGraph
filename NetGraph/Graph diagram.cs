@@ -19,7 +19,7 @@ namespace NetGraph
         public GViewer viewer { get; set; }
         public GraphGenerator graphGenerator { get; set; }
 
-        public Graph_diagram(Graph graph, List<FlagedLink> links)
+        public Graph_diagram(Graph graph)
         {
             InitializeComponent();
 
@@ -31,7 +31,7 @@ namespace NetGraph
                 if (viewerNode != null)
                 {
                     if (viewerNode.Edges.Count() > 0)
-                        OpenChildGraphDiagram(links);
+                        OpenChildGraphDiagram(viewerNode);
                     else
                     {
                         var detailedForm = new DetailedNodeInfo(viewerNode);
@@ -55,11 +55,11 @@ namespace NetGraph
             ResumeLayout();
         }
 
-        private void OpenChildGraphDiagram(List<FlagedLink> links)
+        private void OpenChildGraphDiagram(Node node)
         {
-            graphGenerator = new GraphGenerator(links);
-            var childGraph = graphGenerator.GenerateChildGraph((Node)viewer.SelectedObject);
-            Graph_diagram f = new Graph_diagram(childGraph, links);
+            graphGenerator = new GraphGenerator();
+            var childGraph = graphGenerator.GenerateChildGraph(node);
+            Graph_diagram f = new Graph_diagram(childGraph);
             f.ShowDialog();
         }
     }

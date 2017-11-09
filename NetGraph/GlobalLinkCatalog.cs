@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace NetGraph
 {
-    public class GlobalLinkCatalog : DbContext
+    public static class GlobalLinkCatalog
     {
-        public DbSet<FlagedLink> Links { get; set; }
+        public static List<FlagedLink> Links { get; set; } = new List<FlagedLink>();
 
-        public DbSet<string> Domains { get; set; }
-
+        public static List<string> Domains { get; set; } = new List<string>();
     }
 }
