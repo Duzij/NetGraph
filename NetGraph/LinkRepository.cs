@@ -8,6 +8,7 @@ namespace NetGraph
 {
     public class LinkRepository
     {
+        public List<string> VisitedURLs { get; set; } = new List<string>();
         public FlagedLink GetLink(string linkURL)
         {
             using (var c = new GlobalLinkCatalog())

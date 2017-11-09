@@ -10,17 +10,14 @@ namespace NetGraph
 {
     public class LinkParser
     {
-        public List<FlagedLink> URLs { get; set; }
-
-        public List<string> DomainsList => URLs.Select(a => a.Domain).Distinct().ToList();
+        public LinkRepository linkRepository { get; set; } = new LinkRepository();
 
         public Form1 Form { get; set; }
         public bool ProcessPaused { get; set; }
 
         public LinkParser(Form1 form)
         {
-            URLs = new List<FlagedLink>();
-            URLs.Add(new FlagedLink { URL = form.StartURL, ParentURL = "" });
+            linkRepository.AddLink(new FlagedLink { URL = form.StartURL, ParentURL = "" });
             Form = form;
         }
 
@@ -45,7 +42,7 @@ namespace NetGraph
                             {
                                 if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
                                 {
-                                    if (URLs.Count < Form.MaxNumPages && DomainsList.Count < Form.MaxNumDomain)
+                                    if (URLs.Count < Form.MaxNumPages && catalog.Domains.Count() < Form.MaxNumDomain)
                                     {
                                         AddLink(parentLink, link);
                                     }
@@ -61,7 +58,7 @@ namespace NetGraph
                                 }
                                 else if (Form.MaxNumDomain != 0)
                                 {
-                                    if (DomainsList.Count < Form.MaxNumDomain)
+                                    if (linkRepository.GetAllDomains().Count < Form.MaxNumDomain)
                                     {
                                         AddLink(parentLink, link);
                                     }
@@ -94,9 +91,11 @@ namespace NetGraph
                     URL = parent.Domain + URL;
                 var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
                 parent.ChildLinks.Add(child);
-                URLs.Add(child);
-                Form.setPagesText(URLs.Count.ToString());
-                Form.setDomainsText(DomainsList.Count.ToString());
+                linkRepository.VisitedURLs.Add()
+                linkRepository.AddLink(child);
+
+                Form.setPagesText(linkRepository.GetAllLinks().Count.ToString());
+                Form.setDomainsText(linkRepository.GetAllDomains().Count.ToString());
             }
         }
     }

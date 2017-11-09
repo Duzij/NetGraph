@@ -13,6 +13,8 @@ namespace NetGraph
     public partial class Form1 : Form
     {
         public bool Paused { get; set; }
+
+        public LinkRepository linkRepository { get; set; } = new LinkRepository();
         public int MaxNumPages => Convert.ToInt32(max_num_connections.Value);
         public int MaxNumDomain => Convert.ToInt32(max_num_connections.Value);
         public string StartURL => url_txt_bx.Text;
@@ -51,7 +53,7 @@ namespace NetGraph
             var urls = await linkParser.Analyze(0);
             var generator = new GraphGenerator(urls);
             var graph = generator.GenerateGraph();
-            var diagram = new Graph_diagram(graph, linkParser.URLs);
+            var diagram = new Graph_diagram(graph, linkRepository.GetAllLinks());
             diagram.ShowDialog();
 
             browse_btn.Enabled = true;
