@@ -31,5 +31,21 @@ namespace NetGraph
             }
         }
 
+        public static string CreateChildURL(string domain, string child)
+        {
+
+            if (child.StartsWith("/"))
+            {
+                return domain + child.Substring(1, child.Length -1);
+            }
+            else if (child.StartsWith("./"))
+            {
+                return domain.PadRight(1) + child.Substring(1, child.Length - 1);
+            }
+            else
+            {
+                return domain + child;
+            }
+        }
     }
 }

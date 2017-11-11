@@ -16,14 +16,16 @@ namespace NetGraph
         /// 1.Dostanu URL jako prvni URL listu FoundLinks.
         /// 1.5 pridam tenhle link do VisitedLinks a vymazu z FoundLinks
         /// 2.Nactu dom a vytahnu vsechny linky.
-        /// 3.Pro kazdy link predtim, nez ho pridam, tak se musim ujistit, ze uz neni prebytecny a ze je validni
+        /// 3.Pro kazdy link predtim, nez ho pridam, tak se musim ujistit, ze uz jsem ho ješně nenavštívil a ze je validni
         /// 4.Kdyz je link validni, tak ho pridam do databaze.
-        /// 5.Kdyz uz jsem projel vsechny linky, tak jedu znova
+        /// 5.Kdyz uz jsem projel vsechny linky, tak jedu, dokud není FoundLink kolekce prázdná
         /// </summary>
 
         public LinkRepository linkRepository { get; set; } = new LinkRepository();
         public List<string> VisitedURLs { get; set; } = new List<string>();
         public List<string> FoundURLs { get; set; } = new List<string>();
+
+        public List<Connection> Connections { get; set; } = new List<Connection>();
 
         public Form1 Form { get; set; }
         public bool ProcessPaused { get; set; }
@@ -40,8 +42,7 @@ namespace NetGraph
             var StartLink = FoundURLs[0];
             var StartFlaggedLink = linkRepository.GetLink(StartLink);
 
-            //avoiding recursive links
-            if (!VisitedURLs.Contains(StartLink))
+            if (!PageVisited(StartLink) && !InvalidURL(StartLink))
             {
                 var links = new List<HtmlNode>();
                 links = await GetAllLinksFromWebsite(StartLink, links);
@@ -52,44 +53,59 @@ namespace NetGraph
                     var savedDomains = GlobalLinkCatalog.Domains;
                     VisitedURLs.Add(StartLink);
                     FoundURLs.Remove(StartLink);
-                    FoundURLs.AddRange(links.Sele));
                     foreach (HtmlNode link in links)
                     {
-                        if (!ProcessPaused)
+                        var URL = link.GetAttributeValue("href", string.Empty);
+                        FoundURLs.Add(URL);
+
+                        //avoiding recursive links
+                        if (!PageVisited(URL) && !InvalidURL(StartLink))
                         {
-                            if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
+                            if (!ProcessPaused)
                             {
-                                if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
+                                if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
                                 {
-                                    AddLink(StartFlaggedLink, link);
+                                    if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
+                                    {
+                                        AddLink(StartFlaggedLink, URL);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
                                 }
+                                else if (Form.MaxNumPages != 0)
+                                {
+                                    if (savedLinks.Count < Form.MaxNumPages)
+                                    {
+                                        AddLink(StartFlaggedLink, URL);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                                else if (Form.MaxNumDomain != 0)
+                                {
+                                    if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
+                                    {
+                                        AddLink(StartFlaggedLink, URL);
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+                                }
+                                //no filter given
                                 else
                                 {
-                                    return;
+                                    AddLink(StartFlaggedLink, URL);
                                 }
                             }
-                            else if (Form.MaxNumPages != 0)
-                            {
-                                if (savedLinks.Count < Form.MaxNumPages)
-                                {
-                                    AddLink(StartFlaggedLink, link);
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
-                            else if (Form.MaxNumDomain != 0)
-                            {
-                                if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
-                                {
-                                    AddLink(StartFlaggedLink, link);
-                                }
-                                else
-                                {
-                                    return;
-                                }
-                            }
+                        }
+                        else
+                        {
+                            await Analyze();
                         }
                     }
                 }
@@ -99,8 +115,15 @@ namespace NetGraph
                     System.Windows.Forms.MessageBox.Show("Error");
                 }
             }
-            await Analyze();
+
+            //analyze until all found pages are analyzed
+            if (FoundURLs.Count > 0)
+            {
+                await Analyze();
+            }
         }
+
+
 
         private static async Task<List<HtmlNode>> GetAllLinksFromWebsite(string StartLink, List<HtmlNode> links)
         {
@@ -114,29 +137,32 @@ namespace NetGraph
             return links;
         }
 
-        private void AddLink(FlagedLink parent, HtmlNode link)
+        private void AddLink(FlagedLink parent, string URL)
         {
-            var URL = link.GetAttributeValue("href", string.Empty);
-            if (IsInvalidURL(URL))
-            {
-                return;
-            }
-            else
-            {
-                if (URL.StartsWith("/"))
-                    URL = parent.Domain + URL;
-                var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
-                parent.ChildLinks.Add(child.URL);
-                linkRepository.AddLink(child);
+            var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
 
-                Form.setPagesText(GlobalLinkCatalog.Links.Count.ToString());
-                Form.setDomainsText(GlobalLinkCatalog.Domains.Count.ToString());
+            if (child.IsRelaviteURL)
+            {
+                URL = TextUtils.CreateChildURL(parent.Domain, URL);
+                child = new FlagedLink { URL = URL, ParentURL = parent.URL };
             }
+
+            if (child.IsSameDomain)
+                parent.ChildLinks.Add(URL);
+
+            linkRepository.AddLink(child);
+
+            Form.setPagesText(GlobalLinkCatalog.Links.Count.ToString());
+            Form.setDomainsText(GlobalLinkCatalog.Domains.Count.ToString());
         }
 
-        private bool IsInvalidURL(string URL)
+        private bool InvalidURL(string URL)
         {
-            return URL.StartsWith("#") || URL == "#" || URL == "" || URL == "/" || GlobalLinkCatalog.Links.Where(a => a.URL == URL || a.URL.Replace("https", "http") == URL).Count() > 0;
+            return URL.StartsWith("#") || URL == "#" || URL == "" || URL == "/";
+        }
+        private bool PageVisited(string URL)
+        {
+            return VisitedURLs.Contains(URL) || VisitedURLs.Contains(URL.Replace("http", "https")) || VisitedURLs.Contains(URL.Replace("https", "http"));
         }
     }
 }
