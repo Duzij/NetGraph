@@ -9,48 +9,30 @@ namespace NetGraph
 {
     public class GraphGenerator
     {
-        public GraphGenerator()
+        public GraphGenerator(List<Connection> connnections = null)
         {
+            Connections = connnections;
         }
 
         public List<Edge> Edges { get; set; } = new List<Edge>();
         public LinkRepository linkRepository { get; set; } = new LinkRepository();
 
         public Graph graph { get; set; }
+        public List<Connection> Connections { get; }
 
         public Graph GenerateGraph()
         {
             graph = GraphFactory.GetGraph();
 
-            foreach (var link in GlobalLinkCatalog.Links)
+            if (Connections != null)
             {
-                Node a = new Node(link.URL) { LabelText = link.URL };
-                //we dont want to show child pages on main graph, but we show them only if they don't direct somewhere else
-                if (!link.IsRelaviteURL)
-                    graph.AddNode(a);
-
-                foreach (var child in link.ChildLinks)
+                for (int i = 0; i < Connections.Count; i++)
                 {
-                    if (!linkRepository.GetLink(child).IsRelaviteURL)
-                        graph.AddEdge(link.URL, child);
+                    graph.AddEdge(Connections[i].ParentPage, Connections[i].ChildPage);
                 }
-
             }
 
             return graph;
-        }
-
-        internal void GenerateEdges(string parentURL)
-        {
-            var parent = linkRepository.GetLink(parentURL);
-
-            foreach (var child in parent.ChildLinks)
-            {
-                if (linkRepository.GetLink(child).IsRelaviteURL)
-                {
-                    Edges.Add(new Edge(parentURL, "", child));
-                }
-            }
         }
 
         public Graph GenerateChildGraph(Node parent)

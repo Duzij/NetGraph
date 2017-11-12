@@ -37,145 +37,83 @@ namespace NetGraph
             Form = form;
         }
 
-        //public async Task Analyze()
-        //{
-        //    var StartLink = FoundURLs[0];
-        //    var StartFlaggedLink = linkRepository.GetLink(StartLink);
-
-        //    if (!PageVisited(StartLink) && !InvalidURL(StartLink))
-        //    {
-        //        var links = new List<HtmlNode>();
-        //        links = await GetAllLinksFromWebsite(StartLink, links);
-        //        if (links?.Any() ?? false)
-        //        {
-        //            //tady jsme si jisti, ze jsme web navstivili
-        //            var savedLinks = GlobalLinkCatalog.Links;
-        //            var savedDomains = GlobalLinkCatalog.Domains;
-        //            VisitedURLs.Add(StartLink);
-        //            FoundURLs.Remove(StartLink);
-        //            foreach (HtmlNode link in links)
-        //            {
-        //                var URL = link.GetAttributeValue("href", string.Empty);
-        //                FoundURLs.Add(URL);
-
-        //                //avoiding recursive links
-        //                if (!PageVisited(URL) && !InvalidURL(StartLink))
-        //                {
-        //                    if (!ProcessPaused)
-        //                    {
-        //                        if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
-        //                        {
-        //                            if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
-        //                            {
-        //                                AddLink(StartFlaggedLink, URL);
-        //                            }
-        //                            else
-        //                            {
-        //                                return;
-        //                            }
-        //                        }
-        //                        else if (Form.MaxNumPages != 0)
-        //                        {
-        //                            if (savedLinks.Count < Form.MaxNumPages)
-        //                            {
-        //                                AddLink(StartFlaggedLink, URL);
-        //                            }
-        //                            else
-        //                            {
-        //                                return;
-        //                            }
-        //                        }
-        //                        else if (Form.MaxNumDomain != 0)
-        //                        {
-        //                            if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
-        //                            {
-        //                                AddLink(StartFlaggedLink, URL);
-        //                            }
-        //                            else
-        //                            {
-        //                                return;
-        //                            }
-        //                        }
-        //                        //no filter given
-        //                        else
-        //                        {
-        //                            AddLink(StartFlaggedLink, URL);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        //        else
-        //        {
-        //            System.Windows.Forms.MessageBox.Show("Error");
-        //        }
-        //    }
-
-        //    //analyze until all found pages are analyzed
-        //    if (FoundURLs.Count > 0)
-        //    {
-        //        await Analyze();
-        //    }
-        //}
-
         public async Task Analyze()
         {
             var StartLink = FoundURLs[0];
+            var StartFlaggedLink = linkRepository.GetLink(StartLink);
 
-            if (!PageVisited(StartLink) && !InvalidURL(StartLink))
+            if (!ProcessPaused)
             {
-                var links = new List<HtmlNode>();
-                links = await GetAllLinksFromWebsite(StartLink, links);
-                if (links?.Any() ?? false)
+                if (!PageVisited(StartLink) && !InvalidURL(StartLink))
                 {
-                    //tady jsme si jisti, ze jsme web navstivili
-                    var savedLinks = GlobalLinkCatalog.Links;
-                    var savedDomains = GlobalLinkCatalog.Domains;
-                    VisitedURLs.Add(StartLink);
-                    FoundURLs.Remove(StartLink);
-                    foreach (HtmlNode link in links)
+                    var links = await GetAllLinksFromWebsite(StartLink);
+                    if (links?.Any() ?? false)
                     {
-                        var URL = link.GetAttributeValue("href", string.Empty);
-                        FoundURLs.Add(URL);
-
-                        //avoiding recursive links
-                        if (!PageVisited(URL) && !InvalidURL(StartLink))
+                        //tady jsme si jisti, ze jsme web navstivili
+                        var savedLinks = GlobalLinkCatalog.Links;
+                        var savedDomains = GlobalLinkCatalog.Domains;
+                        VisitedURLs.Add(StartLink);
+                        FoundURLs.RemoveAll(a => a == StartLink);
+                        foreach (string link in links)
                         {
-                            if (!ProcessPaused)
+                            var childLink = FormatChildLink(StartFlaggedLink, link);
+                            //only if this connection not already exists
+                            Connections.Add(new Connection(StartLink, childLink.URL));
+
+                            //avoiding recursive links
+                            if (!VisitedURLs.Contains(childLink.URL + "/") && !PageVisited(childLink.URL) && !InvalidURL(StartLink))
                             {
+
                                 if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
                                 {
                                     if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
-                                        Connections.Add(new Connection(StartLink, URL));
+                                    {
+                                        AddLink(StartFlaggedLink, childLink);
+                                    }
                                     else
+                                    {
                                         return;
+                                    }
                                 }
                                 else if (Form.MaxNumPages != 0)
                                 {
                                     if (savedLinks.Count < Form.MaxNumPages)
-                                        Connections.Add(new Connection(StartLink, URL));
+                                    {
+                                        AddLink(StartFlaggedLink, childLink);
+                                    }
                                     else
+                                    {
                                         return;
+                                    }
                                 }
                                 else if (Form.MaxNumDomain != 0)
                                 {
                                     if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
-                                        Connections.Add(new Connection(StartLink, URL));
+                                    {
+                                        AddLink(StartFlaggedLink, childLink);
+                                    }
                                     else
+                                    {
                                         return;
+                                    }
                                 }
+                                //no filter given
                                 else
-                                    Connections.Add(new Connection(StartLink, URL));
+                                {
+                                    AddLink(StartFlaggedLink, childLink);
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error");
+                    }
                 }
-
-                else
-                {
-                    System.Windows.Forms.MessageBox.Show("Error");
-                }
+            }
+            else
+            {
+                return;
             }
 
             //analyze until all found pages are analyzed
@@ -185,19 +123,44 @@ namespace NetGraph
             }
         }
 
-        private static async Task<List<HtmlNode>> GetAllLinksFromWebsite(string StartLink, List<HtmlNode> links)
+        private async Task<List<string>> GetAllLinksFromWebsite(string StartLink)
         {
             using (WebClient client = new WebClient())
             {
                 string html = await client.DownloadStringTaskAsync(new Uri(StartLink));
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(html);
-                links = doc.DocumentNode.SelectNodes("//a[@href]").ToList();
+                var list = doc.DocumentNode.SelectNodes("//a[@href]")
+                    .Select(a => a.GetAttributeValue("href", string.Empty)).ToList();
+
+                foreach (var item in list.ToList())
+                {
+                    if (list.Contains(StartLink.Substring(0, StartLink.Length - 1)) ||
+                        list.Contains(StartLink + "/") || list.Contains(StartLink) ||
+                        list.Contains(StartLink.Replace("http", "https")) ||
+                        list.Contains(StartLink.Replace("https", "http")) ||
+                        InvalidURL(item))
+                    {
+                        list.Remove(item);
+                    }
+                }
+                return list.Distinct().ToList();
             }
-            return links;
         }
 
-        private void AddLink(FlagedLink parent, string URL)
+        private void AddLink(FlagedLink parent, FlagedLink child)
+        {
+            if (child.IsSameDomain)
+                parent.ChildLinks.Add(child.URL);
+
+            FoundURLs.Add(child.URL);
+            linkRepository.AddLink(child);
+
+            Form.setPagesText(GlobalLinkCatalog.Links.Count.ToString());
+            Form.setDomainsText(GlobalLinkCatalog.Domains.Count.ToString());
+        }
+
+        private FlagedLink FormatChildLink(FlagedLink parent, string URL)
         {
             var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
 
@@ -208,13 +171,7 @@ namespace NetGraph
                 child = new FlagedLink { URL = URL, ParentURL = parent.URL };
             }
 
-            if (child.IsSameDomain)
-                parent.ChildLinks.Add(URL);
-
-            linkRepository.AddLink(child);
-
-            Form.setPagesText(GlobalLinkCatalog.Links.Count.ToString());
-            Form.setDomainsText(GlobalLinkCatalog.Domains.Count.ToString());
+            return child;
         }
 
         private bool InvalidURL(string URL)
@@ -223,7 +180,11 @@ namespace NetGraph
         }
         private bool PageVisited(string URL)
         {
-            return VisitedURLs.Contains(URL.Substring(0,URL.Length - 1)) || VisitedURLs.Contains(URL) || VisitedURLs.Contains(URL.Replace("http", "https")) || VisitedURLs.Contains(URL.Replace("https", "http"));
+            return VisitedURLs.Contains(URL.Substring(0, URL.Length - 1)) ||
+                VisitedURLs.Contains(URL) ||
+                VisitedURLs.Contains(URL.Replace("http", "https")) ||
+                VisitedURLs.Contains(URL.Replace("https", "http"));
         }
+
     }
 }

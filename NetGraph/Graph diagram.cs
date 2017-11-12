@@ -40,10 +40,7 @@ namespace NetGraph
                 }
             });
 
-            foreach (var item in graph.Nodes)
-            {
-                item.Attr.LabelMargin = 5;
-            }
+            ColorizeAndAjustFonts(graph);
 
             viewer.Graph = graph;
             viewer.Dock = DockStyle.Fill;
@@ -53,6 +50,15 @@ namespace NetGraph
             Controls.Add(viewer);
 
             ResumeLayout();
+        }
+
+        private static void ColorizeAndAjustFonts(Graph graph)
+        {
+            foreach (var item in graph.Nodes)
+            {
+                item.Label.FontSize = item.Edges.Count() / 3 < 5 ? 5 : item.Edges.Count() / 3;
+                item.Attr.LabelMargin = 5;
+            }
         }
 
         private void OpenChildGraphDiagram(Node node)

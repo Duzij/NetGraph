@@ -20,15 +20,15 @@ namespace NetGraph
 
         public void AddLink(FlagedLink link)
         {
-                var domain = link.Domain;
-                if (!GlobalLinkCatalog.Domains.Contains(domain))
-                {
+            var domain = link.Domain;
+            if (!GlobalLinkCatalog.Domains.Contains(domain))
+            {
                 GlobalLinkCatalog.Domains.Add(domain);
-                }
+            }
 
-                if (!GlobalLinkCatalog.Links.Contains(link))
+            if (!GlobalLinkCatalog.Links.Contains(link))
                 GlobalLinkCatalog.Links.Add(link);
         }
-     
+
     }
 }

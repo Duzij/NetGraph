@@ -17,11 +17,11 @@ namespace NetGraph
                 if (r2.IsMatch(a))
                 {
                     int index2 = a.IndexOf("/");
-                    return a.Substring(0, index2);
+                    return AddCommonSlashIfNecessary(a.Substring(0, index2));
                 }
                 else
                 {
-                    return a;
+                    return AddCommonSlashIfNecessary(a);
                 }
                
             }
@@ -29,22 +29,30 @@ namespace NetGraph
             {
                 return "-not-avalible-";
             }
+
+            string AddCommonSlashIfNecessary(string link) {
+                if (link[link.Length - 1] == '/')
+                    return link;
+                else
+                    return link + "/";
+            }
         }
+
 
         public static string CreateChildURL(string domain, string child)
         {
 
             if (child.StartsWith("/"))
             {
-                return domain + child.Substring(1, child.Length -1);
+                return "http://" + domain + child.Substring(1, child.Length -1);
             }
             else if (child.StartsWith("./"))
             {
-                return domain.PadRight(1) + child.Substring(1, child.Length - 1);
+                return "http://" + domain.PadRight(1) + child.Substring(1, child.Length - 1);
             }
             else
             {
-                return domain + child;
+                return "http://" + domain + child;
             }
         }
     }

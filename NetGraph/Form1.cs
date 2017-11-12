@@ -51,7 +51,7 @@ namespace NetGraph
             stop_btn.Enabled = true;
             linkParser = new LinkParser(this);
             await linkParser.Analyze();
-            var generator = new GraphGenerator();
+            var generator = new GraphGenerator(linkParser.Connections);
             var graph = generator.GenerateGraph();
             var diagram = new Graph_diagram(graph);
             diagram.ShowDialog();
