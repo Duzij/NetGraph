@@ -25,5 +25,6 @@ namespace NetGraph
 
         public string ParentURL { get; set; }
         public List<string> ChildLinks { get; set; } = new List<string>();
+        public bool HasNoDomain => TextUtils.GetDomain(URL) == "-not-avalible-";
     }
 }

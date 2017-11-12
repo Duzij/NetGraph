@@ -37,10 +37,91 @@ namespace NetGraph
             Form = form;
         }
 
+        //public async Task Analyze()
+        //{
+        //    var StartLink = FoundURLs[0];
+        //    var StartFlaggedLink = linkRepository.GetLink(StartLink);
+
+        //    if (!PageVisited(StartLink) && !InvalidURL(StartLink))
+        //    {
+        //        var links = new List<HtmlNode>();
+        //        links = await GetAllLinksFromWebsite(StartLink, links);
+        //        if (links?.Any() ?? false)
+        //        {
+        //            //tady jsme si jisti, ze jsme web navstivili
+        //            var savedLinks = GlobalLinkCatalog.Links;
+        //            var savedDomains = GlobalLinkCatalog.Domains;
+        //            VisitedURLs.Add(StartLink);
+        //            FoundURLs.Remove(StartLink);
+        //            foreach (HtmlNode link in links)
+        //            {
+        //                var URL = link.GetAttributeValue("href", string.Empty);
+        //                FoundURLs.Add(URL);
+
+        //                //avoiding recursive links
+        //                if (!PageVisited(URL) && !InvalidURL(StartLink))
+        //                {
+        //                    if (!ProcessPaused)
+        //                    {
+        //                        if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
+        //                        {
+        //                            if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
+        //                            {
+        //                                AddLink(StartFlaggedLink, URL);
+        //                            }
+        //                            else
+        //                            {
+        //                                return;
+        //                            }
+        //                        }
+        //                        else if (Form.MaxNumPages != 0)
+        //                        {
+        //                            if (savedLinks.Count < Form.MaxNumPages)
+        //                            {
+        //                                AddLink(StartFlaggedLink, URL);
+        //                            }
+        //                            else
+        //                            {
+        //                                return;
+        //                            }
+        //                        }
+        //                        else if (Form.MaxNumDomain != 0)
+        //                        {
+        //                            if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
+        //                            {
+        //                                AddLink(StartFlaggedLink, URL);
+        //                            }
+        //                            else
+        //                            {
+        //                                return;
+        //                            }
+        //                        }
+        //                        //no filter given
+        //                        else
+        //                        {
+        //                            AddLink(StartFlaggedLink, URL);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        else
+        //        {
+        //            System.Windows.Forms.MessageBox.Show("Error");
+        //        }
+        //    }
+
+        //    //analyze until all found pages are analyzed
+        //    if (FoundURLs.Count > 0)
+        //    {
+        //        await Analyze();
+        //    }
+        //}
+
         public async Task Analyze()
         {
             var StartLink = FoundURLs[0];
-            var StartFlaggedLink = linkRepository.GetLink(StartLink);
 
             if (!PageVisited(StartLink) && !InvalidURL(StartLink))
             {
@@ -66,46 +147,27 @@ namespace NetGraph
                                 if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
                                 {
                                     if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
-                                    {
-                                        AddLink(StartFlaggedLink, URL);
-                                    }
+                                        Connections.Add(new Connection(StartLink, URL));
                                     else
-                                    {
                                         return;
-                                    }
                                 }
                                 else if (Form.MaxNumPages != 0)
                                 {
                                     if (savedLinks.Count < Form.MaxNumPages)
-                                    {
-                                        AddLink(StartFlaggedLink, URL);
-                                    }
+                                        Connections.Add(new Connection(StartLink, URL));
                                     else
-                                    {
                                         return;
-                                    }
                                 }
                                 else if (Form.MaxNumDomain != 0)
                                 {
                                     if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
-                                    {
-                                        AddLink(StartFlaggedLink, URL);
-                                    }
+                                        Connections.Add(new Connection(StartLink, URL));
                                     else
-                                    {
                                         return;
-                                    }
                                 }
-                                //no filter given
                                 else
-                                {
-                                    AddLink(StartFlaggedLink, URL);
-                                }
+                                    Connections.Add(new Connection(StartLink, URL));
                             }
-                        }
-                        else
-                        {
-                            await Analyze();
                         }
                     }
                 }
@@ -123,8 +185,6 @@ namespace NetGraph
             }
         }
 
-
-
         private static async Task<List<HtmlNode>> GetAllLinksFromWebsite(string StartLink, List<HtmlNode> links)
         {
             using (WebClient client = new WebClient())
@@ -141,7 +201,8 @@ namespace NetGraph
         {
             var child = new FlagedLink { URL = URL, ParentURL = parent.URL };
 
-            if (child.IsRelaviteURL)
+            //relative links only
+            if (child.IsRelaviteURL || child.HasNoDomain)
             {
                 URL = TextUtils.CreateChildURL(parent.Domain, URL);
                 child = new FlagedLink { URL = URL, ParentURL = parent.URL };
@@ -162,7 +223,7 @@ namespace NetGraph
         }
         private bool PageVisited(string URL)
         {
-            return VisitedURLs.Contains(URL) || VisitedURLs.Contains(URL.Replace("http", "https")) || VisitedURLs.Contains(URL.Replace("https", "http"));
+            return VisitedURLs.Contains(URL.Substring(0,URL.Length - 1)) || VisitedURLs.Contains(URL) || VisitedURLs.Contains(URL.Replace("http", "https")) || VisitedURLs.Contains(URL.Replace("https", "http"));
         }
     }
 }
