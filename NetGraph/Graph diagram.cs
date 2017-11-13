@@ -19,7 +19,7 @@ namespace NetGraph
         public GraphGenerator graphGenerator { get; set; }
         public LinkRepository Repository { get; set; } = new LinkRepository();
 
-        public Dictionary<string, Microsoft.Msagl.Drawing.Color> NodesColor { get; set; } = new Dictionary<string, Color>();
+        public Dictionary<string, Color> NodesColor { get; set; } = new Dictionary<string, Color>();
 
         public void HighlightNodes(List<string> nodesId)
         {
@@ -58,11 +58,10 @@ namespace NetGraph
                 }
             });
 
-            viewer.Graph = graph;
-            AdjustFontsAndColorizeDomains();
+            AdjustFontsAndColorizeDomains(graph);
 
+            viewer.Graph = graph;
             viewer.Dock = DockStyle.Fill;
-            viewer.Controls.Add(new Button() { Text = "Text" });
             var settings = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings() { AdjustScale = true };
             LayoutHelpers.CalculateLayout(graph.GeometryGraph, settings, null);
 
@@ -71,15 +70,8 @@ namespace NetGraph
             ResumeLayout();
         }
 
-        private void AdjustFontsAndColorizeDomains()
+        private void AdjustFontsAndColorizeDomains(Graph graph)
         {
-            var graph = viewer.Graph;
-            foreach (var item in graph.Nodes)
-            {
-                item.Label.FontSize = item.Edges.Count() == 0 ? 5 : item.Edges.Count() / 3 + 5;
-                item.Attr.LabelMargin = 5;
-            }
-
             foreach (var domain in Repository.GetAllDomains())
             {
                 var color = Colorizer.GetRandomColor();
@@ -95,6 +87,12 @@ namespace NetGraph
                     }
                 }
             }
+
+            foreach (var item in graph.Nodes)
+            {
+                item.Label.FontSize = item.Edges.Count() == 0 ? 5 : item.Edges.Count() / 3 + 5;
+                item.Attr.LabelMargin = 5;
+            }
         }
 
         private void ColorizeLabelAndNode(string node, Color fontColor, Color nodeColor)
@@ -107,9 +105,14 @@ namespace NetGraph
         {
             if (keyData == (Keys.Control | Keys.F))
             {
-                SearchForm search = new SearchForm(this);
-                search.Show();
-                return true;
+                if (Application.OpenForms.OfType<SearchForm>().Count() == 1)
+                    Application.OpenForms.OfType<SearchForm>().First().Show();
+                else
+                {
+                    SearchForm search = new SearchForm(this);
+                    search.Show();
+                    return true;
+                }
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }

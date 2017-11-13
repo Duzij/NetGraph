@@ -45,7 +45,6 @@ namespace NetGraph
             linkParser.ProcessPaused = true;
             browse_btn.Enabled = true;
             stop_btn.Enabled = false;
-            await CreateGraph();
         }
 
         private async void browse_btn_Click(object sender, EventArgs e)
@@ -53,15 +52,17 @@ namespace NetGraph
             linkRepository.FlushCatalog();
             browse_btn.Enabled = false;
             stop_btn.Enabled = true;
-            await CreateGraph();
+            linkParser = new LinkParser(this);
+            
+            await linkParser.Analyze();
             browse_btn.Enabled = true;
             stop_btn.Enabled = false;
+
+            CreateGraph();
         }
 
-        private async Task CreateGraph()
+        private void CreateGraph()
         {
-            linkParser = new LinkParser(this);
-            await linkParser.Analyze();
             var generator = new GraphGenerator(linkParser.Connections);
             var graph = generator.GenerateGraph();
             var diagram = new Graph_diagram(graph);
