@@ -11,11 +11,6 @@ namespace NetGraph
         public FlagedLink GetLink(string linkURL)
         {
             return GlobalLinkCatalog.Links.Where(a => a.URL == linkURL).FirstOrDefault();
-            //var link = GlobalLinkCatalog.Links.Where(a => a.URL == linkURL).FirstOrDefault();
-            //    if (link != null)
-            //        return link;
-            //    else
-            //        throw new KeyNotFoundException("Link was not found");
         }
 
         public List<string> Search(string text)
@@ -35,5 +30,20 @@ namespace NetGraph
                 GlobalLinkCatalog.Links.Add(link);
         }
 
+        public List<string> GetAllLinksByDomain(string domain)
+        {
+            return GlobalLinkCatalog.Links.Where(a => a.Domain == domain).Select(b => b.URL).ToList();
+        }
+
+        public void FlushCatalog()
+        {
+            GlobalLinkCatalog.Links = new List<FlagedLink>();
+            GlobalLinkCatalog.Domains = new List<string>();
+        }
+
+        public List<string> GetAllDomains()
+        {
+            return GlobalLinkCatalog.Domains;
+        }
     }
 }

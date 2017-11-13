@@ -28,34 +28,17 @@ namespace NetGraph
             {
                 for (int i = 0; i < Connections.Count; i++)
                 {
-                    graph.AddEdge(Connections[i].ParentPage, Connections[i].ChildPage);
+                    try
+                    {
+                        graph.AddEdge(Connections[i].ParentPage, Connections[i].ChildPage);
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
 
             return graph;
         }
-
-        public Graph GenerateChildGraph(Node parent)
-        {
-            graph = GraphFactory.GetGraph();
-
-            var parentNode = new Node(parent.LabelText) { LabelText = parent.LabelText };
-            graph.AddNode(parentNode);
-
-            var parentLink = linkRepository.GetLink(parentNode.LabelText);
-
-            foreach (var child in parentLink.ChildLinks)
-            {
-                if (linkRepository.GetLink(child).IsRelaviteURL)
-                {
-                    graph.AddNode(new Node(child) { LabelText = child });
-                    graph.AddEdge(parentLink.URL, "", child);
-                }
-            }
-            return graph;
-        }
-
-
-
     }
 }

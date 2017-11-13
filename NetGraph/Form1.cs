@@ -40,24 +40,32 @@ namespace NetGraph
             domainsfound_lbl.Text = txt;
         }
 
-        private void stop_btn_Click(object sender, EventArgs e)
+        private async void stop_btn_Click(object sender, EventArgs e)
         {
             linkParser.ProcessPaused = true;
+            browse_btn.Enabled = true;
+            stop_btn.Enabled = false;
+            await CreateGraph();
         }
 
         private async void browse_btn_Click(object sender, EventArgs e)
         {
+            linkRepository.FlushCatalog();
             browse_btn.Enabled = false;
             stop_btn.Enabled = true;
+            await CreateGraph();
+            browse_btn.Enabled = true;
+            stop_btn.Enabled = false;
+        }
+
+        private async Task CreateGraph()
+        {
             linkParser = new LinkParser(this);
             await linkParser.Analyze();
             var generator = new GraphGenerator(linkParser.Connections);
             var graph = generator.GenerateGraph();
             var diagram = new Graph_diagram(graph);
             diagram.ShowDialog();
-
-            browse_btn.Enabled = true;
-            stop_btn.Enabled = false;
         }
     }
 }

@@ -18,8 +18,9 @@ namespace NetGraph
     {
         public GViewer viewer { get; set; }
         public GraphGenerator graphGenerator { get; set; }
+        public LinkRepository Repository { get; set; } = new LinkRepository();
 
-        public void HighlightNodes (List<string> nodesId)
+        public void HighlightNodes(List<string> nodesId)
         {
             foreach (var item in nodesId)
             {
@@ -52,18 +53,12 @@ namespace NetGraph
                 var viewerNode = (Node)viewer.SelectedObject;
                 if (viewerNode != null)
                 {
-                    if (viewerNode.Edges.Count() > 0)
-                        OpenChildGraphDiagram(viewerNode);
-                    else
-                    {
-                        var detailedForm = new DetailedNodeInfo(viewerNode);
-                        detailedForm.Show();
-                    }
+                    var detailedForm = new DetailedNodeInfo(viewerNode);
+                    detailedForm.Show();
                 }
             });
 
-
-            ColorizeAndAjustFonts(graph);
+            AdjustFontsAndColorizeDomains(graph);
 
             viewer.Graph = graph;
             viewer.Dock = DockStyle.Fill;
@@ -76,21 +71,20 @@ namespace NetGraph
             ResumeLayout();
         }
 
-        private static void ColorizeAndAjustFonts(Graph graph)
+        private void AdjustFontsAndColorizeDomains(Graph graph)
         {
             foreach (var item in graph.Nodes)
             {
                 item.Label.FontSize = item.Edges.Count() == 0 ? 5 : item.Edges.Count() / 3 + 5;
                 item.Attr.LabelMargin = 5;
             }
-        }
-
-        private void OpenChildGraphDiagram(Node node)
-        {
-            graphGenerator = new GraphGenerator();
-            var childGraph = graphGenerator.GenerateChildGraph(node);
-            Graph_diagram f = new Graph_diagram(childGraph);
-            f.ShowDialog();
+            foreach (var domain in Repository.GetAllDomains())
+            {
+                foreach (var link in Repository.GetAllLinksByDomain(domain))
+                {
+                    graph.FindNode(link).Attr.FillColor = Colorizer.GetRandomColor();
+                }
+            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
