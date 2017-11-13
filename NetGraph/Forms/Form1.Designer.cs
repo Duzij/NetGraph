@@ -58,7 +58,7 @@
             // domainsfound_lbl
             // 
             this.domainsfound_lbl.AutoSize = true;
-            this.domainsfound_lbl.Location = new System.Drawing.Point(93, 179);
+            this.domainsfound_lbl.Location = new System.Drawing.Point(109, 179);
             this.domainsfound_lbl.Name = "domainsfound_lbl";
             this.domainsfound_lbl.Size = new System.Drawing.Size(13, 13);
             this.domainsfound_lbl.TabIndex = 22;
@@ -67,7 +67,7 @@
             // pagesfound_lbl
             // 
             this.pagesfound_lbl.AutoSize = true;
-            this.pagesfound_lbl.Location = new System.Drawing.Point(93, 155);
+            this.pagesfound_lbl.Location = new System.Drawing.Point(109, 155);
             this.pagesfound_lbl.Name = "pagesfound_lbl";
             this.pagesfound_lbl.Size = new System.Drawing.Size(13, 13);
             this.pagesfound_lbl.TabIndex = 21;
@@ -87,9 +87,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(9, 155);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.Size = new System.Drawing.Size(96, 13);
             this.label4.TabIndex = 19;
-            this.label4.Text = "Pages found";
+            this.label4.Text = "Connections found";
             // 
             // browse_btn
             // 

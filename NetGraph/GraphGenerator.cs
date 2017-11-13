@@ -22,7 +22,7 @@ namespace NetGraph
 
         public Graph GenerateGraph()
         {
-            graph = GraphFactory.GetGraph();
+            graph = new Graph();
 
             if (Connections != null)
             {

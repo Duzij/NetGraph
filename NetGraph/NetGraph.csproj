@@ -59,47 +59,46 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Colorizer.cs" />
-    <Compile Include="Connection.cs" />
-    <Compile Include="DetailedNodeInfo.cs">
+    <Compile Include="Entities\Connection.cs" />
+    <Compile Include="Forms\DetailedNodeInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DetailedNodeInfo.Designer.cs">
+    <Compile Include="Forms\DetailedNodeInfo.Designer.cs">
       <DependentUpon>DetailedNodeInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="FlagedURL.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="Entities\FlagedURL.cs" />
+    <Compile Include="Forms\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="Forms\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalLinkCatalog.cs" />
-    <Compile Include="Graph diagram.cs">
+    <Compile Include="Forms\Graph diagram.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Graph diagram.Designer.cs">
+    <Compile Include="Forms\Graph diagram.Designer.cs">
       <DependentUpon>Graph diagram.cs</DependentUpon>
     </Compile>
-    <Compile Include="GraphFactory.cs" />
     <Compile Include="GraphGenerator.cs" />
     <Compile Include="LinkRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LinkParser.cs" />
-    <Compile Include="SearchForm.cs">
+    <Compile Include="Forms\SearchForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SearchForm.Designer.cs">
+    <Compile Include="Forms\SearchForm.Designer.cs">
       <DependentUpon>SearchForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TextUtils.cs" />
-    <EmbeddedResource Include="DetailedNodeInfo.resx">
+    <EmbeddedResource Include="Forms\DetailedNodeInfo.resx">
       <DependentUpon>DetailedNodeInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="Forms\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Graph diagram.resx">
+    <EmbeddedResource Include="Forms\Graph diagram.resx">
       <DependentUpon>Graph diagram.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -111,7 +110,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="SearchForm.resx">
+    <EmbeddedResource Include="Forms\SearchForm.resx">
       <DependentUpon>SearchForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
