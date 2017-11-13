@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.stop_btn = new System.Windows.Forms.Button();
             this.domainsfound_lbl = new System.Windows.Forms.Label();
             this.pagesfound_lbl = new System.Windows.Forms.Label();
@@ -41,10 +40,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.url_txt_bx = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.max_num_domains)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.max_num_connections)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // stop_btn
@@ -162,10 +159,6 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "URL";
             // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -187,7 +180,6 @@
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.max_num_domains)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.max_num_connections)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -207,7 +199,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox url_txt_bx;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }
 

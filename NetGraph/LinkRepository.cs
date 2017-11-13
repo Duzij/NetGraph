@@ -18,6 +18,11 @@ namespace NetGraph
             //        throw new KeyNotFoundException("Link was not found");
         }
 
+        public List<string> Search(string text)
+        {
+            return GlobalLinkCatalog.Links.Where(a => a.URL.Contains(text)).Select(b => b.URL).ToList();
+        }
+
         public void AddLink(FlagedLink link)
         {
             var domain = link.Domain;

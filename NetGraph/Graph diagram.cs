@@ -19,6 +19,28 @@ namespace NetGraph
         public GViewer viewer { get; set; }
         public GraphGenerator graphGenerator { get; set; }
 
+        public void HighlightNodes (List<string> nodesId)
+        {
+            foreach (var item in nodesId)
+            {
+                var node = viewer.Graph.FindNode(item);
+                viewer.Graph.FindNode(item).Attr.FillColor = Microsoft.Msagl.Drawing.Color.Green;
+                viewer.Graph.FindNode(item).Label.FontColor = Microsoft.Msagl.Drawing.Color.White;
+            }
+            viewer.Refresh();
+        }
+
+        public void DeHighlightNodes(List<string> nodesId)
+        {
+            foreach (var item in nodesId)
+            {
+                var node = viewer.Graph.FindNode(item);
+                viewer.Graph.FindNode(item).Attr.FillColor = Microsoft.Msagl.Drawing.Color.White;
+                viewer.Graph.FindNode(item).Label.FontColor = Microsoft.Msagl.Drawing.Color.Black;
+            }
+            viewer.Refresh();
+        }
+
         public Graph_diagram(Graph graph)
         {
             InitializeComponent();
@@ -40,10 +62,12 @@ namespace NetGraph
                 }
             });
 
+
             ColorizeAndAjustFonts(graph);
 
             viewer.Graph = graph;
             viewer.Dock = DockStyle.Fill;
+            viewer.Controls.Add(new Button() { Text = "Text" });
             var settings = new Microsoft.Msagl.Layout.MDS.MdsLayoutSettings() { AdjustScale = true };
             LayoutHelpers.CalculateLayout(graph.GeometryGraph, settings, null);
 
@@ -67,6 +91,17 @@ namespace NetGraph
             var childGraph = graphGenerator.GenerateChildGraph(node);
             Graph_diagram f = new Graph_diagram(childGraph);
             f.ShowDialog();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                SearchForm search = new SearchForm(this);
+                search.Show();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
