@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace NetGraph
 {
@@ -44,71 +45,78 @@ namespace NetGraph
 
             if (!ProcessPaused)
             {
-                if (!PageVisited(StartLink) && !InvalidURL(StartLink))
+                try
                 {
-                    var links = await GetAllLinksFromWebsite(StartLink);
-                    if (links?.Any() ?? false)
+                    if (!PageVisited(StartLink) && !InvalidURL(StartLink))
                     {
-                        //tady jsme si jisti, ze jsme web navstivili
-                        var savedLinks = GlobalLinkCatalog.Links;
-                        var savedDomains = GlobalLinkCatalog.Domains;
-                        VisitedURLs.Add(StartLink);
-                        FoundURLs.RemoveAll(a => a == StartLink);
-                        foreach (string link in links)
+                        var links = await GetAllLinksFromWebsite(StartLink);
+                        if (links?.Any() ?? false)
                         {
-                            var childLink = FormatChildLink(StartFlaggedLink, link);
-                            //only if this connection not already exists
-                            Connections.Add(new Connection(StartLink, childLink.URL));
-
-                            //avoiding recursive links
-                            if (!VisitedURLs.Contains(childLink.URL + "/") && !PageVisited(childLink.URL) && !InvalidURL(StartLink))
+                            //tady jsme si jisti, ze jsme web navstivili
+                            var savedLinks = GlobalLinkCatalog.Links;
+                            var savedDomains = GlobalLinkCatalog.Domains;
+                            VisitedURLs.Add(StartLink);
+                            FoundURLs.RemoveAll(a => a == StartLink);
+                            foreach (string link in links)
                             {
+                                var childLink = FormatChildLink(StartFlaggedLink, link);
+                                //only if this connection not already exists
+                                Connections.Add(new Connection(StartLink, childLink.URL));
 
-                                if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
+                                //avoiding recursive links
+                                if (!VisitedURLs.Contains(childLink.URL + "/") && !PageVisited(childLink.URL) && !InvalidURL(StartLink))
                                 {
-                                    if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
+
+                                    if (Form.MaxNumPages != 0 && Form.MaxNumDomain != 0)
+                                    {
+                                        if (savedLinks.Count < Form.MaxNumPages && savedDomains.Count < Form.MaxNumDomain)
+                                        {
+                                            AddLink(StartFlaggedLink, childLink);
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
+                                    }
+                                    else if (Form.MaxNumPages != 0)
+                                    {
+                                        if (savedLinks.Count < Form.MaxNumPages)
+                                        {
+                                            AddLink(StartFlaggedLink, childLink);
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
+                                    }
+                                    else if (Form.MaxNumDomain != 0)
+                                    {
+                                        if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
+                                        {
+                                            AddLink(StartFlaggedLink, childLink);
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
+                                    }
+                                    //no filter given
+                                    else
                                     {
                                         AddLink(StartFlaggedLink, childLink);
                                     }
-                                    else
-                                    {
-                                        return;
-                                    }
-                                }
-                                else if (Form.MaxNumPages != 0)
-                                {
-                                    if (savedLinks.Count < Form.MaxNumPages)
-                                    {
-                                        AddLink(StartFlaggedLink, childLink);
-                                    }
-                                    else
-                                    {
-                                        return;
-                                    }
-                                }
-                                else if (Form.MaxNumDomain != 0)
-                                {
-                                    if (GlobalLinkCatalog.Domains.Count < Form.MaxNumDomain)
-                                    {
-                                        AddLink(StartFlaggedLink, childLink);
-                                    }
-                                    else
-                                    {
-                                        return;
-                                    }
-                                }
-                                //no filter given
-                                else
-                                {
-                                    AddLink(StartFlaggedLink, childLink);
                                 }
                             }
                         }
+                        else
+                        {
+                            FoundURLs.RemoveAll(a => a == StartLink);
+                        }
                     }
-                    else
-                    {
-                        System.Windows.Forms.MessageBox.Show("Error");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
                 }
             }
             else
@@ -128,23 +136,30 @@ namespace NetGraph
             using (WebClient client = new WebClient())
             {
                 string html = await client.DownloadStringTaskAsync(new Uri(StartLink));
-                HtmlDocument doc = new HtmlDocument();
+                var doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(html);
-                var list = doc.DocumentNode.SelectNodes("//a[@href]")
-                    .Select(a => a.GetAttributeValue("href", string.Empty)).ToList();
-
-                foreach (var item in list.ToList())
+                var list = doc.DocumentNode.SelectNodes("//a[@href]");
+                if (list?.Any() ?? false)
                 {
-                    if (list.Contains(StartLink.Substring(0, StartLink.Length - 1)) ||
-                        list.Contains(StartLink + "/") || list.Contains(StartLink) ||
-                        list.Contains(StartLink.Replace("http", "https")) ||
-                        list.Contains(StartLink.Replace("https", "http")) ||
-                        InvalidURL(item))
+                    var UrlList = list.Select(a => a.GetAttributeValue("href", string.Empty)).ToList();
+
+                    foreach (var item in UrlList.ToList())
                     {
-                        list.Remove(item);
+                        if (UrlList.Contains(StartLink.Substring(0, StartLink.Length - 1)) ||
+                            UrlList.Contains(StartLink + "/") || UrlList .Contains(StartLink) ||
+                            UrlList.Contains(StartLink.Replace("http", "https")) ||
+                            UrlList.Contains(StartLink.Replace("https", "http")) ||
+                            InvalidURL(item))
+                        {
+                            UrlList.Remove(item);
+                        }
                     }
+                    return UrlList.Distinct().ToList();
                 }
-                return list.Distinct().ToList();
+                else
+                {
+                    return new List<string>();
+                }
             }
         }
 

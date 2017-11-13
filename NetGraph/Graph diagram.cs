@@ -56,7 +56,7 @@ namespace NetGraph
         {
             foreach (var item in graph.Nodes)
             {
-                item.Label.FontSize = item.Edges.Count() / 3 < 5 ? 5 : item.Edges.Count() / 3;
+                item.Label.FontSize = item.Edges.Count() == 0 ? 5 : item.Edges.Count() / 3 + 5;
                 item.Attr.LabelMargin = 5;
             }
         }
