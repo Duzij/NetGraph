@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +45,11 @@ namespace NetGraph
         public List<string> GetAllDomains()
         {
             return GlobalLinkCatalog.Domains;
+        }
+
+        internal void UpdateCode(FlagedLink flagedLink, HttpStatusCode code)
+        {
+            GlobalLinkCatalog.Links.Find(a => a.URL == flagedLink.URL).Code = code;
         }
     }
 }

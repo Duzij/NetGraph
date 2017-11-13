@@ -49,7 +49,17 @@ namespace NetGraph
                 {
                     if (!PageVisited(StartLink) && !InvalidURL(StartLink))
                     {
-                        var links = await GetAllLinksFromWebsite(StartLink);
+                        var links = new List<string>();
+                        try
+                        {
+                            links = await GetAllLinksFromWebsite(StartLink);
+                        }
+                        catch (WebException ex)
+                        {
+                            linkRepository.UpdateCode(StartFlaggedLink, ((HttpWebResponse)ex.Response).StatusCode);
+                            Connections.Add(new Connection(StartLink, StartFlaggedLink.ParentURL));
+                        }
+
                         if (links?.Any() ?? false)
                         {
                             //tady jsme si jisti, ze jsme web navstivili
@@ -60,7 +70,7 @@ namespace NetGraph
                             foreach (string link in links)
                             {
                                 var childLink = FormatChildLink(StartFlaggedLink, link);
-                                //only if this connection not already exists
+
                                 Connections.Add(new Connection(StartLink, childLink.URL));
 
                                 //avoiding recursive links
@@ -135,7 +145,9 @@ namespace NetGraph
         {
             using (WebClient client = new WebClient())
             {
-                string html = await client.DownloadStringTaskAsync(new Uri(StartLink));
+                string html = "";
+                html = await client.DownloadStringTaskAsync(new Uri(StartLink));
+
                 var doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(html);
                 var list = doc.DocumentNode.SelectNodes("//a[@href]");
@@ -146,7 +158,7 @@ namespace NetGraph
                     foreach (var item in UrlList.ToList())
                     {
                         if (UrlList.Contains(StartLink.Substring(0, StartLink.Length - 1)) ||
-                            UrlList.Contains(StartLink + "/") || UrlList .Contains(StartLink) ||
+                            UrlList.Contains(StartLink + "/") || UrlList.Contains(StartLink) ||
                             UrlList.Contains(StartLink.Replace("http", "https")) ||
                             UrlList.Contains(StartLink.Replace("https", "http")) ||
                             InvalidURL(item))
@@ -156,10 +168,7 @@ namespace NetGraph
                     }
                     return UrlList.Distinct().ToList();
                 }
-                else
-                {
-                    return new List<string>();
-                }
+                return new List<string>();
             }
         }
 

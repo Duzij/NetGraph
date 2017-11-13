@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace NetGraph
@@ -22,7 +23,7 @@ namespace NetGraph
             else
                 return false;
         }
-
+        public HttpStatusCode Code { get; set; }
         public string ParentURL { get; set; }
         public List<string> ChildLinks { get; set; } = new List<string>();
         public bool HasNoDomain => TextUtils.GetDomain(URL) == "-not-avalible-";
