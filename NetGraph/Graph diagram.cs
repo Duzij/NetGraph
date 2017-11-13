@@ -79,7 +79,8 @@ namespace NetGraph
                 {
                     if (Repository.GetLink(link).Code != System.Net.HttpStatusCode.Accepted && Repository.GetLink(link).Code != 0)
                     {
-                        ColorizeLabelAndNode(link, Color.White, Color.Red);
+                        graph.FindNode(link).Attr.FillColor = Color.Red;
+                        graph.FindNode(link).Label.FontColor = Color.White;
                     }
                     else
                     {

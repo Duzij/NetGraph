@@ -32,10 +32,13 @@
             this.url_txtbx = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.response_lbl = new System.Windows.Forms.Label();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
@@ -45,15 +48,18 @@
             // 
             // url_txtbx
             // 
-            this.url_txtbx.Location = new System.Drawing.Point(48, 10);
+            this.url_txtbx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.url_txtbx.Location = new System.Drawing.Point(48, 7);
             this.url_txtbx.Name = "url_txtbx";
-            this.url_txtbx.Size = new System.Drawing.Size(224, 20);
+            this.url_txtbx.Size = new System.Drawing.Size(857, 20);
             this.url_txtbx.TabIndex = 1;
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 43);
+            this.label2.Location = new System.Drawing.Point(911, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 13);
             this.label2.TabIndex = 2;
@@ -61,19 +67,32 @@
             // 
             // response_lbl
             // 
+            this.response_lbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.response_lbl.AutoSize = true;
             this.response_lbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.response_lbl.Location = new System.Drawing.Point(96, 43);
+            this.response_lbl.Location = new System.Drawing.Point(1027, 14);
             this.response_lbl.Name = "response_lbl";
             this.response_lbl.Size = new System.Drawing.Size(28, 13);
             this.response_lbl.TabIndex = 3;
             this.response_lbl.Text = "200";
             // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webBrowser1.Location = new System.Drawing.Point(12, 33);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(1043, 475);
+            this.webBrowser1.TabIndex = 4;
+            // 
             // DetailedNodeInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 73);
+            this.ClientSize = new System.Drawing.Size(1067, 520);
+            this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.response_lbl);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.url_txtbx);
@@ -91,5 +110,6 @@
         private System.Windows.Forms.TextBox url_txtbx;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label response_lbl;
+        private System.Windows.Forms.WebBrowser webBrowser1;
     }
 }

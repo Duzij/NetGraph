@@ -72,6 +72,7 @@ namespace NetGraph
                                 var childLink = FormatChildLink(StartFlaggedLink, link);
 
                                 Connections.Add(new Connection(StartLink, childLink.URL));
+                                childLink.Code = HttpStatusCode.Accepted;
 
                                 //avoiding recursive links
                                 if (!VisitedURLs.Contains(childLink.URL + "/") && !PageVisited(childLink.URL) && !InvalidURL(StartLink))
