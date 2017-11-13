@@ -16,7 +16,7 @@ namespace NetGraph
 
         public List<string> Search(string text)
         {
-            return GlobalLinkCatalog.Links.Where(a => a.URL.Contains(text)).Select(b => b.URL).ToList();
+            return GlobalLinkCatalog.Links.Where(a => a.URL.Contains(text)).Select(b => b.URL).Distinct().ToList();
         }
 
         public void AddLink(FlagedLink link)
