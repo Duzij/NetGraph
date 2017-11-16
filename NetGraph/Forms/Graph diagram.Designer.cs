@@ -38,7 +38,7 @@
             this.KeyPreview = true;
             this.Name = "Graph_diagram";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Graph_diagram";
+            this.Text = "Graph diagram";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ResumeLayout(false);
 

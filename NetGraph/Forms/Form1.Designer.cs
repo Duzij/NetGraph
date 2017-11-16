@@ -40,16 +40,19 @@
             this.label2 = new System.Windows.Forms.Label();
             this.url_txt_bx = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.max_num_domains)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.max_num_connections)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // stop_btn
             // 
             this.stop_btn.Enabled = false;
-            this.stop_btn.Location = new System.Drawing.Point(12, 202);
+            this.stop_btn.Location = new System.Drawing.Point(12, 112);
             this.stop_btn.Name = "stop_btn";
-            this.stop_btn.Size = new System.Drawing.Size(259, 27);
+            this.stop_btn.Size = new System.Drawing.Size(259, 43);
             this.stop_btn.TabIndex = 23;
             this.stop_btn.Text = "Stop";
             this.stop_btn.UseVisualStyleBackColor = true;
@@ -58,7 +61,7 @@
             // domainsfound_lbl
             // 
             this.domainsfound_lbl.AutoSize = true;
-            this.domainsfound_lbl.Location = new System.Drawing.Point(109, 179);
+            this.domainsfound_lbl.Location = new System.Drawing.Point(111, 190);
             this.domainsfound_lbl.Name = "domainsfound_lbl";
             this.domainsfound_lbl.Size = new System.Drawing.Size(13, 13);
             this.domainsfound_lbl.TabIndex = 22;
@@ -67,7 +70,7 @@
             // pagesfound_lbl
             // 
             this.pagesfound_lbl.AutoSize = true;
-            this.pagesfound_lbl.Location = new System.Drawing.Point(109, 155);
+            this.pagesfound_lbl.Location = new System.Drawing.Point(111, 166);
             this.pagesfound_lbl.Name = "pagesfound_lbl";
             this.pagesfound_lbl.Size = new System.Drawing.Size(13, 13);
             this.pagesfound_lbl.TabIndex = 21;
@@ -76,7 +79,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 179);
+            this.label5.Location = new System.Drawing.Point(11, 190);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(78, 13);
             this.label5.TabIndex = 20;
@@ -85,7 +88,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 155);
+            this.label4.Location = new System.Drawing.Point(11, 166);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(96, 13);
             this.label4.TabIndex = 19;
@@ -93,9 +96,9 @@
             // 
             // browse_btn
             // 
-            this.browse_btn.Location = new System.Drawing.Point(12, 115);
+            this.browse_btn.Location = new System.Drawing.Point(12, 216);
             this.browse_btn.Name = "browse_btn";
-            this.browse_btn.Size = new System.Drawing.Size(259, 27);
+            this.browse_btn.Size = new System.Drawing.Size(259, 43);
             this.browse_btn.TabIndex = 18;
             this.browse_btn.Text = "Browse";
             this.browse_btn.UseVisualStyleBackColor = true;
@@ -159,11 +162,39 @@
             this.label1.TabIndex = 12;
             this.label1.Text = "URL";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Image = global::NetGraph.Properties.Resources.giphy;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(284, 271);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 24;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.UseWaitCursor = true;
+            this.pictureBox1.Visible = false;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label6.Location = new System.Drawing.Point(90, 181);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(104, 13);
+            this.label6.TabIndex = 25;
+            this.label6.Text = "Generuje se diagram";
+            this.label6.UseWaitCursor = true;
+            this.label6.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 241);
+            this.ClientSize = new System.Drawing.Size(284, 271);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.stop_btn);
             this.Controls.Add(this.domainsfound_lbl);
             this.Controls.Add(this.pagesfound_lbl);
@@ -176,10 +207,14 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.url_txt_bx);
             this.Controls.Add(this.label1);
+            this.MaximumSize = new System.Drawing.Size(300, 310);
+            this.MinimumSize = new System.Drawing.Size(300, 310);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.max_num_domains)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.max_num_connections)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -199,6 +234,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox url_txt_bx;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label6;
     }
 }
 

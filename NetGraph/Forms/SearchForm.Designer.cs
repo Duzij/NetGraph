@@ -68,7 +68,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Name = "SearchForm";
-            this.Text = "SearchForm";
+            this.Text = "Search";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SearchForm_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
