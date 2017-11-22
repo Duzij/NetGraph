@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,7 @@ namespace NetGraph
         public LinkRepository linkRepository { get; set; } = new LinkRepository();
         public int MaxNumPages => Convert.ToInt32(max_num_connections.Value);
         public int MaxNumDomain => Convert.ToInt32(max_num_domains.Value);
-        public string StartURL => url_txt_bx.Text;
+        public string StartURL => url_txt_bx.Text.LastOrDefault().ToString() == "/" ? url_txt_bx.Text.Substring(0, url_txt_bx.Text.Length - 1) : url_txt_bx.Text;
 
         public LinkParser linkParser { get; set; }
 
@@ -53,14 +54,21 @@ namespace NetGraph
             browse_btn.Enabled = false;
             stop_btn.Enabled = true;
             linkParser = new LinkParser(this);
-            
+
+
             await linkParser.Analyze();
             browse_btn.Enabled = true;
             stop_btn.Enabled = false;
 
+
+
+            var t = new Thread(() => CreateGraph());
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+
             label6.Visible = true;
             pictureBox1.Visible = true;
-            await Task.Run(() => CreateGraph());
+
             pictureBox1.Visible = false;
             label6.Visible = false;
         }

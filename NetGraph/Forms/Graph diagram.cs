@@ -33,12 +33,13 @@ namespace NetGraph
 
         public void DeHighlightNodes(List<string> nodesId)
         {
-            foreach (var item in nodesId)
-            {
-                Color color = default(Color);
-                NodesColor.TryGetValue(item, out color);
-                ColorizeLabelAndNode(item, Color.Black, color);
-            }
+            if (nodesId != null)
+                foreach (var item in nodesId)
+                {
+                    Color color = default(Color);
+                    NodesColor.TryGetValue(item, out color);
+                    ColorizeLabelAndNode(item, Color.Black, color);
+                }
             viewer.Refresh();
         }
 

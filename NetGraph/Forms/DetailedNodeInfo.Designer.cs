@@ -33,6 +33,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.response_lbl = new System.Windows.Forms.Label();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -87,11 +88,22 @@
             this.webBrowser1.Size = new System.Drawing.Size(806, 503);
             this.webBrowser1.TabIndex = 4;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(657, 33);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(161, 23);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "Pages contains this link";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // DetailedNodeInfo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 574);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.response_lbl);
             this.Controls.Add(this.label2);
@@ -112,5 +124,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label response_lbl;
         private System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.Button button1;
     }
 }
