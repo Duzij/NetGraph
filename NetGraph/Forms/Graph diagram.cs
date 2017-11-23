@@ -51,15 +51,14 @@ namespace NetGraph
             viewer.EdgeInsertButtonVisible = false;
             viewer.MouseDoubleClick += new MouseEventHandler((sender, evt) =>
             {
-                var viewerNode = (Node)viewer.SelectedObject;
-                if (viewerNode != null)
+                var viewerNode = viewer.SelectedObject;
+
+                if (viewerNode != null && viewerNode is Node)
                 {
-                    var detailedForm = new DetailedNodeInfo(viewerNode);
-                    detailedForm.Show();
+                    var detailedForm = new DetailedNodeInfo((Node)viewerNode);
+                    detailedForm.ShowDialog();
                 }
             });
-
-            AdjustFontsAndColorizeDomains(graph);
 
             viewer.Graph = graph;
             viewer.Dock = DockStyle.Fill;
@@ -69,32 +68,6 @@ namespace NetGraph
             Controls.Add(viewer);
 
             ResumeLayout();
-        }
-
-        private void AdjustFontsAndColorizeDomains(Graph graph)
-        {
-            foreach (var domain in Repository.GetAllDomains())
-            {
-                var color = Colorizer.GetRandomColor();
-                foreach (var link in Repository.GetAllLinksByDomain(domain))
-                {
-                    if (Repository.GetLink(link).Code != System.Net.HttpStatusCode.Accepted && Repository.GetLink(link).Code != 0)
-                    {
-                        graph.FindNode(link).Attr.FillColor = Color.Red;
-                        graph.FindNode(link).Label.FontColor = Color.White;
-                    }
-                    else
-                    {
-                        graph.FindNode(link).Attr.FillColor = color;
-                    }
-                }
-            }
-
-            foreach (var item in graph.Nodes)
-            {
-                item.Label.FontSize = item.Edges.Count() == 0 ? 5 : item.Edges.Count() / 3 + 5;
-                item.Attr.LabelMargin = 5;
-            }
         }
 
         private void ColorizeLabelAndNode(string node, Color fontColor, Color nodeColor)

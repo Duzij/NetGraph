@@ -23,7 +23,10 @@ namespace NetGraph
             url_txtbx.Text = node.LabelText;
             response_lbl.Text = LinkRepository.GetLink(node.LabelText).Code.ToString();
             webBrowser1.Navigate(node.LabelText);
-            Pages = node.Edges.Select(a => a.Source).ToList();
+
+            var pagesList = node.Edges.Select(a => a.Target).Distinct().ToList();
+            pagesList.AddRange(node.Edges.Select(a => a.Source).Distinct().ToList());
+            Pages = pagesList;
         }
 
         private void button1_Click(object sender, EventArgs e)

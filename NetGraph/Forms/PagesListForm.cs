@@ -16,6 +16,14 @@ namespace NetGraph.Forms
         {
             InitializeComponent();
             listBox1.DataSource = list;
+            List = list;
+        }
+
+        public List<string> List { get; }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(listBox1.SelectedItem.ToString());
         }
     }
 }

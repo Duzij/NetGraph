@@ -24,6 +24,44 @@ namespace NetGraph
         {
             graph = new Graph();
 
+            CreateConnections();
+            ColorizeNodes();
+            AdjustNodeLayout();
+
+            return graph;
+        }
+
+        private void AdjustNodeLayout()
+        {
+            foreach (var item in graph.Nodes)
+            {
+                item.Label.FontSize = item.Edges.Count() == 0 ? 5 : item.Edges.Count() / 3 + 5;
+                item.Attr.LabelMargin = 5;
+            }
+        }
+
+        private void ColorizeNodes()
+        {
+            foreach (var domain in linkRepository.GetAllDomains())
+            {
+                var color = Colorizer.GetRandomColor();
+                foreach (var link in linkRepository.GetAllLinksByDomain(domain))
+                {
+                    if (linkRepository.GetLink(link).Code != System.Net.HttpStatusCode.Accepted && linkRepository.GetLink(link).Code != 0)
+                    {
+                        graph.FindNode(link).Attr.FillColor = Color.Red;
+                        graph.FindNode(link).Label.FontColor = Color.White;
+                    }
+                    else
+                    {
+                        graph.FindNode(link).Attr.FillColor = color;
+                    }
+                }
+            }
+        }
+
+        private void CreateConnections()
+        {
             if (Connections != null)
             {
                 for (int i = 0; i < Connections.Count; i++)
@@ -37,8 +75,6 @@ namespace NetGraph
                     }
                 }
             }
-
-            return graph;
         }
     }
 }

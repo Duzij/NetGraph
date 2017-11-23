@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Msagl.Drawing;
 
 namespace NetGraph
 {
@@ -21,6 +22,7 @@ namespace NetGraph
         public string StartURL => url_txt_bx.Text.LastOrDefault().ToString() == "/" ? url_txt_bx.Text.Substring(0, url_txt_bx.Text.Length - 1) : url_txt_bx.Text;
 
         public LinkParser linkParser { get; set; }
+        public Graph graph { get; private set; }
 
         public Form1()
         {
@@ -43,6 +45,8 @@ namespace NetGraph
 
         private void stop_btn_Click(object sender, EventArgs e)
         {
+            label6.Visible = true;
+            pictureBox1.Visible = true;
             linkParser.ProcessPaused = true;
             browse_btn.Enabled = true;
             stop_btn.Enabled = false;
@@ -55,19 +59,19 @@ namespace NetGraph
             stop_btn.Enabled = true;
             linkParser = new LinkParser(this);
 
-
             await linkParser.Analyze();
             browse_btn.Enabled = true;
             stop_btn.Enabled = false;
 
-
-
-            var t = new Thread(() => CreateGraph());
-            t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-
             label6.Visible = true;
             pictureBox1.Visible = true;
+            await Task.Run(() => CreateGraph());
+
+            var diagram = new Graph_diagram(graph);
+            diagram.ShowDialog();
+
+            pictureBox1.Visible = false;
+            label6.Visible = false;
 
             pictureBox1.Visible = false;
             label6.Visible = false;
@@ -76,9 +80,7 @@ namespace NetGraph
         private void CreateGraph()
         {
             var generator = new GraphGenerator(linkParser.Connections);
-            var graph = generator.GenerateGraph();
-            var diagram = new Graph_diagram(graph);
-            diagram.ShowDialog();
+            graph = generator.GenerateGraph();
         }
     }
 }
