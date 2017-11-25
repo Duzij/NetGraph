@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Msagl.Drawing;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,18 +13,21 @@ namespace NetGraph.Forms
 {
     public partial class PagesListForm : Form
     {
-        public PagesListForm(List<string> list)
+        public PagesListForm(IEnumerable<Edge> list)
         {
-            InitializeComponent();
-            listBox1.DataSource = list;
-            List = list;
+            InitializeComponent();  
+            listBox2.DataSource = list.Select(a => a.Target).Distinct().ToList();
+            listBox1.DataSource = list.Select(a => a.Source).Distinct().ToList();
         }
-
-        public List<string> List { get; }
 
         private void button1_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(listBox1.SelectedItem.ToString());
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(listBox2.SelectedItem.ToString());
         }
     }
 }
