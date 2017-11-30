@@ -128,6 +128,7 @@ namespace NetGraph
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.ToString());
+                    return;
                 }
             }
             else
